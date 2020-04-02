@@ -38,7 +38,7 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
-        bg = new Texture("textures/bg.png");
+        bg = new Texture("textures/cosmos.jpg");
         atlas = new TextureAtlas(Gdx.files.internal("textures/menuAtlas.tpack"));
         initSprites();
     }
