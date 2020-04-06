@@ -104,7 +104,6 @@ public class MenuScreen extends BaseScreen {
     private void bgMusic() {
         music.isLooping();
         music.play();
-        //super.isPlaying = true;
     }
 
     private void update(float delta) {
