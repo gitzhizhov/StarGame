@@ -1,6 +1,8 @@
 package com.mygdx.game.sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -15,14 +17,19 @@ public class MainShip extends Sprite {
     private static final float SHIP_HEIGHT = 0.15f;
     private static final float BOTTOM_MARGIN = 0.05f;
     private static final int INVALID_POINTER = -1;
+    private static final float BULLET_VOLUME = 0.2f;
 
     private Rect worldBounds;
     private BulletPool bulletPool;
     private TextureRegion bulletRegion;
     private Vector2 bulletV;
+    private float bulletTimer;
+    private float rateOfFire;
 
-    private final Vector2 v0;
-    private final Vector2 v;
+    Sound sound;
+
+    private final Vector2 velocity0;
+    private final Vector2 velocity;
 
     private boolean pressedLeft;
     private boolean pressedRight;
@@ -34,9 +41,12 @@ public class MainShip extends Sprite {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletPool = bulletPool;
         bulletRegion = atlas.findRegion("bulletMainShip");
-        bulletV = new Vector2(0, 0.5f);
-        v0 = new Vector2(0.5f, 0);
-        v = new Vector2();
+        sound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
+        bulletV = new Vector2(0, 0.5f); // скорость пули летит вверх
+        bulletTimer = 0;
+        rateOfFire = 0.02f;
+        velocity0 = new Vector2(0.5f, 0); // постоянная скорость по оси х
+        velocity = new Vector2();
     }
 
     @Override
@@ -48,14 +58,22 @@ public class MainShip extends Sprite {
 
     @Override
     public void update(float delta) {
-        pos.mulAdd(v, delta);
-        if (getLeft() < worldBounds.getLeft()) {
-            setLeft(worldBounds.getLeft());
+        pos.mulAdd(velocity, delta);
+        // проверка выхода за пределы экрана, остановка у края экрана
+        if (this.getLeft() < worldBounds.getLeft()) {
+            this.setLeft(worldBounds.getLeft());
             stop();
         }
-        if (getRight() > worldBounds.getRight()) {
-            setRight(worldBounds.getRight());
+        // проверка выхода за пределы экрана, остановка у края экрана
+        if (this.getRight() > worldBounds.getRight()) {
+            this.setRight(worldBounds.getRight());
             stop();
+        }
+        // таймер стрельбы
+        bulletTimer -= delta + rateOfFire;
+        if (bulletTimer < 0) {
+            shoot();
+            bulletTimer = 1;
         }
     }
 
@@ -109,8 +127,6 @@ public class MainShip extends Sprite {
                 pressedRight = true;
                 moveRight();
                 break;
-            case Input.Keys.UP:
-                shoot();
         }
         return false;
     }
@@ -142,17 +158,18 @@ public class MainShip extends Sprite {
     public void shoot() {
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, pos, bulletV, 0.01f, worldBounds, 1);
+        sound.play(BULLET_VOLUME);
     }
 
     private void moveRight() {
-        v.set(v0);
+        velocity.set(velocity0);
     }
 
     private void moveLeft() {
-        v.set(v0).rotate(180);
+        velocity.set(velocity0).rotate(180);
     }
 
     private void stop() {
-        v.setZero();
+        velocity.setZero();
     }
 }
