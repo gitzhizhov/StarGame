@@ -58,6 +58,7 @@ public class MainShip extends Ship {
             setRight(worldBounds.getRight());
             stop();
         }
+        autoShoot(delta);
     }
 
     @Override
