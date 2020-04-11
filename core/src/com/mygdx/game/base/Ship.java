@@ -36,6 +36,10 @@ public abstract class Ship extends Sprite {
     @Override
     public void update(float delta) {
         pos.mulAdd(velocity, delta);
+    }
+
+    // авто стрельба отдельно
+    public void autoShoot(float delta) {
         reloadTimer += delta;
         if (reloadTimer >= reloadInterval) {
             reloadTimer = 0f;

@@ -11,6 +11,7 @@ import com.mygdx.game.pool.BulletPool;
 public class Enemy extends Ship {
 
     private Vector2 approx = new Vector2(0, 0.7f);
+
     public Enemy(BulletPool bulletPool, Rect worldBounds) {
         this.bulletPool = bulletPool;
         this.worldBounds = worldBounds;
@@ -22,6 +23,18 @@ public class Enemy extends Ship {
     @Override
     public void update(float delta) {
         super.update(delta);
+
+        // "быстрый" вылет сверху
+        // стрельба только при полном вылете сверху
+        if (this.getTop() > worldBounds.getTop()) {
+            velocity.set(approx).rotate(180);
+        }
+        else
+        {
+            velocity.set(velocity0);
+            autoShoot(delta);
+        }
+
         if (getBottom() <= worldBounds.getBottom()) {
             destroy();
         }
