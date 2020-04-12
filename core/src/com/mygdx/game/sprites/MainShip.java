@@ -1,19 +1,19 @@
 package com.mygdx.game.sprites;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import com.mygdx.game.base.Ship;
 import com.mygdx.game.exception.GameException;
 import com.mygdx.game.math.Rect;
 import com.mygdx.game.pool.BulletPool;
+import com.mygdx.game.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
+    private static final int HP = 10;
     private static final float SHIP_HEIGHT = 0.15f;
     private static final float BOTTOM_MARGIN = 0.05f;
     private static final int INVALID_POINTER = -1;
@@ -24,19 +24,21 @@ public class MainShip extends Ship {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool, Sound shootSound) throws GameException {
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool, Sound shootSound) throws GameException {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
         this.shootSound = shootSound;
         bulletRegion = atlas.findRegion("bulletMainShip");
         bulletV = new Vector2(0, 0.5f); // скорость пули
+        bulletPos = new Vector2();
         velocity0 = new Vector2(0.5f, 0); // постоянная скорость коробля по оси х
         velocity = new Vector2();
         reloadInterval = 0.2f;
         reloadTimer = reloadInterval;
         bulletHeight = 0.01f;
         damage = 1;
-        hp = 100;
+        hp = HP;
     }
 
     @Override
@@ -49,6 +51,8 @@ public class MainShip extends Ship {
     @Override
     public void update(float delta) {
         super.update(delta);
+        bulletPos.set(pos.x, pos.y + getHalfHeight());
+        autoShoot(delta);
         // проверка выхода за пределы экрана, остановка у края экрана
         if (getLeft() < worldBounds.getLeft()) {
             setLeft(worldBounds.getLeft());
@@ -136,6 +140,13 @@ public class MainShip extends Ship {
                 break;
         }
         return false;
+    }
+
+    public boolean isBulletCollision(Rect bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > pos.y
+                || bullet.getTop() < getBottom());
     }
 
     private void moveRight() {

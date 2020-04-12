@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public abstract class SpritesPool<T extends Sprite> {
 
     protected final List<T> activeObjects = new ArrayList<>();

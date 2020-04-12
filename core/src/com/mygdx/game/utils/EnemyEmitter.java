@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import com.mygdx.game.math.EnemyPool;
+import com.mygdx.game.pool.EnemyPool;
 import com.mygdx.game.math.Rect;
 import com.mygdx.game.math.Rnd;
 import com.mygdx.game.sprites.Enemy;
@@ -72,7 +72,7 @@ public class EnemyEmitter {
             generateTimer = 0f;
             Enemy enemy = enemyPool.obtain();
             float type = (float) Math.random();
-            if (type < 0.6f) {
+            if (type < 0.5f) {
                 enemy.set(
                         enemySmallRegion,
                         enemySmallV,
@@ -85,7 +85,7 @@ public class EnemyEmitter {
                         ENEMY_SMALL_HP,
                         ENEMY_SMALL_HEIGHT
                 );
-            } else if (type < 0.85f) {
+            } else if (type < 0.8f) {
                 enemy.set(
                         enemyMediumRegion,
                         enemyMediumV,
