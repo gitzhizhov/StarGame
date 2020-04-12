@@ -21,6 +21,7 @@ import com.mygdx.game.sprites.Bullet;
 import com.mygdx.game.sprites.Enemy;
 import com.mygdx.game.sprites.GameOver;
 import com.mygdx.game.sprites.MainShip;
+import com.mygdx.game.sprites.NewGame;
 import com.mygdx.game.sprites.Star;
 import com.mygdx.game.utils.EnemyEmitter;
 
@@ -38,6 +39,7 @@ public class GameScreen extends BaseScreen {
     private Star[] stars;
     private MainShip mainShip;
     private GameOver gameOver;
+    private NewGame newGame;
 
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
@@ -87,6 +89,7 @@ public class GameScreen extends BaseScreen {
         }
         mainShip.resize(worldBounds);
         gameOver.resize(worldBounds);
+        newGame.resize(worldBounds);
     }
 
     @Override
@@ -143,6 +146,7 @@ public class GameScreen extends BaseScreen {
             }
             mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
             gameOver = new GameOver(atlas);
+            newGame = new NewGame(atlas);
         } catch (GameException e) {
             throw new RuntimeException(e);
         }
@@ -227,6 +231,7 @@ public class GameScreen extends BaseScreen {
                 break;
             case GAME_OVER:
                 gameOver.draw(batch);
+                newGame.draw(batch);
                 break;
         }
         explosionPool.drawActiveSprites(batch);

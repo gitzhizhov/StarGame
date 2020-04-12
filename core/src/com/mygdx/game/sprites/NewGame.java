@@ -6,15 +6,16 @@ import com.mygdx.game.base.Sprite;
 import com.mygdx.game.exception.GameException;
 import com.mygdx.game.math.Rect;
 
-public class GameOver extends Sprite {
+public class NewGame extends Sprite {
 
-    public GameOver(TextureAtlas atlas) throws GameException {
-        super(atlas.findRegion("message_game_over"));
+    public NewGame(TextureAtlas atlas) throws GameException {
+        super(atlas.findRegion("button_new_game"));
     }
 
     @Override
     public void resize(Rect worldBounds) {
         setHeightProportion(0.07f);
-        setTop(0.12f);
+        setBottom(-0.3f);
+        //setTop(0.00001f);
     }
 }
