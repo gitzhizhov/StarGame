@@ -126,6 +126,9 @@ public class GameScreen extends BaseScreen {
         if (state == State.PLAYING) {
             mainShip.touchDown(touch, pointer, button);
         }
+        if (state == State.GAME_OVER) {
+            newGame.touchDown(touch, pointer, button);
+        }
         return false;
     }
 
@@ -133,6 +136,9 @@ public class GameScreen extends BaseScreen {
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         if (state == State.PLAYING) {
             mainShip.touchUp(touch, pointer, button);
+        }
+        if (state == State.GAME_OVER) {
+            newGame.touchUp(touch, pointer, button);
         }
         return false;
     }
@@ -146,7 +152,7 @@ public class GameScreen extends BaseScreen {
             }
             mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
             gameOver = new GameOver(atlas);
-            newGame = new NewGame(atlas);
+            newGame = new NewGame(atlas, this);
         } catch (GameException e) {
             throw new RuntimeException(e);
         }
@@ -207,6 +213,19 @@ public class GameScreen extends BaseScreen {
         if (mainShip.isDestroyed()) {
             state = State.GAME_OVER;
         }
+    }
+
+    public void startNewGame() {
+        state = State.PLAYING;
+        mainShip.startNewGame(worldBounds);
+
+        disposeSprites();
+    }
+
+    private void disposeSprites() {
+        bulletPool.dispose();
+        enemyPool.dispose();
+        explosionPool.dispose();
     }
 
     private void freeAllDestroyed() {
