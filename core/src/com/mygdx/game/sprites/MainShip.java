@@ -142,6 +142,12 @@ public class MainShip extends Ship {
         return false;
     }
 
+    public void startNewGame(Rect worldBounds) {
+        hp = HP;
+        pos.x = worldBounds.pos.x;
+        flushDestroy();
+    }
+
     public boolean isBulletCollision(Rect bullet) {
         return !(bullet.getRight() < getLeft()
                 || bullet.getLeft() > getRight()

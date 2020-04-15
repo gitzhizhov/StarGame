@@ -21,6 +21,7 @@ import com.mygdx.game.sprites.Bullet;
 import com.mygdx.game.sprites.Enemy;
 import com.mygdx.game.sprites.GameOver;
 import com.mygdx.game.sprites.MainShip;
+import com.mygdx.game.sprites.NewGame;
 import com.mygdx.game.sprites.Star;
 import com.mygdx.game.utils.EnemyEmitter;
 
@@ -38,6 +39,7 @@ public class GameScreen extends BaseScreen {
     private Star[] stars;
     private MainShip mainShip;
     private GameOver gameOver;
+    private NewGame newGame;
 
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
@@ -87,6 +89,7 @@ public class GameScreen extends BaseScreen {
         }
         mainShip.resize(worldBounds);
         gameOver.resize(worldBounds);
+        newGame.resize(worldBounds);
     }
 
     @Override
@@ -123,6 +126,9 @@ public class GameScreen extends BaseScreen {
         if (state == State.PLAYING) {
             mainShip.touchDown(touch, pointer, button);
         }
+        if (state == State.GAME_OVER) {
+            newGame.touchDown(touch, pointer, button);
+        }
         return false;
     }
 
@@ -130,6 +136,9 @@ public class GameScreen extends BaseScreen {
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         if (state == State.PLAYING) {
             mainShip.touchUp(touch, pointer, button);
+        }
+        if (state == State.GAME_OVER) {
+            newGame.touchUp(touch, pointer, button);
         }
         return false;
     }
@@ -143,6 +152,7 @@ public class GameScreen extends BaseScreen {
             }
             mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
             gameOver = new GameOver(atlas);
+            newGame = new NewGame(atlas, this);
         } catch (GameException e) {
             throw new RuntimeException(e);
         }
@@ -205,6 +215,19 @@ public class GameScreen extends BaseScreen {
         }
     }
 
+    public void startNewGame() {
+        state = State.PLAYING;
+        mainShip.startNewGame(worldBounds);
+
+        disposeSprites();
+    }
+
+    private void disposeSprites() {
+        bulletPool.dispose();
+        enemyPool.dispose();
+        explosionPool.dispose();
+    }
+
     private void freeAllDestroyed() {
         bulletPool.freeAllDestroyedActiveObjects();
         enemyPool.freeAllDestroyedActiveObjects();
@@ -227,6 +250,7 @@ public class GameScreen extends BaseScreen {
                 break;
             case GAME_OVER:
                 gameOver.draw(batch);
+                newGame.draw(batch);
                 break;
         }
         explosionPool.drawActiveSprites(batch);
