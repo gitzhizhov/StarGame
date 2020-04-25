@@ -174,6 +174,8 @@ public class GameScreen extends BaseScreen {
             enemyPool.updateActiveSprites(delta);
             enemyEmitter.generate(delta);
         }
+        if (state == State.GAME_OVER)
+            newGame.update(delta);
     }
 
     private void checkCollisions() {
@@ -219,13 +221,13 @@ public class GameScreen extends BaseScreen {
         state = State.PLAYING;
         mainShip.startNewGame(worldBounds);
 
-        disposeSprites();
+        freeObjects();
     }
 
-    private void disposeSprites() {
-        bulletPool.dispose();
-        enemyPool.dispose();
-        explosionPool.dispose();
+    private void freeObjects() {
+        bulletPool.freeAllActiveObjects();
+        enemyPool.freeAllActiveObjects();
+        explosionPool.freeAllActiveObjects();
     }
 
     private void freeAllDestroyed() {

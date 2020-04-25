@@ -146,6 +146,11 @@ public class MainShip extends Ship {
         hp = HP;
         pos.x = worldBounds.pos.x;
         flushDestroy();
+        pressedLeft = false;
+        pressedRight = false;
+        leftPointer = INVALID_POINTER;
+        rightPointer = INVALID_POINTER;
+        stop();
     }
 
     public boolean isBulletCollision(Rect bullet) {
