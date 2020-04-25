@@ -14,6 +14,8 @@ import com.mygdx.game.sprites.Explosion;
 public abstract class Ship extends Sprite {
 
     private static final float DAMAGE_ANIMATE_INTERVAL = 0.1f;
+    private static final float DELTA_COEFF = 1.2f;
+    private float savedDelta = 0f;
 
     protected Rect worldBounds;
     protected BulletPool bulletPool;
@@ -42,6 +44,14 @@ public abstract class Ship extends Sprite {
 
     @Override
     public void update(float delta) {
+        // возвращает delta(time) после паузы
+        if (savedDelta == 0f) {
+            savedDelta = delta;
+        }
+        if (delta > savedDelta*DELTA_COEFF) {
+            delta = savedDelta;
+        }
+
         pos.mulAdd(velocity, delta);
         damageAnimateTimer += delta;
         if (damageAnimateTimer >= DAMAGE_ANIMATE_INTERVAL) {
@@ -67,6 +77,10 @@ public abstract class Ship extends Sprite {
 
     public int getDamage() {
         return damage;
+    }
+
+    public int getHp() {
+        return hp;
     }
 
     protected void autoShoot(float delta) {
