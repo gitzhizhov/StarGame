@@ -23,6 +23,8 @@ public abstract class Ship extends Sprite {
     protected TextureRegion bulletRegion;
     protected Vector2 bulletV;
     protected Vector2 bulletPos;
+    protected Vector2 bulletPosLeft;
+    protected Vector2 bulletPosRight;
     protected float bulletHeight;
     protected int damage;
     protected Sound shootSound;
@@ -91,9 +93,25 @@ public abstract class Ship extends Sprite {
         }
     }
 
+    protected void autoShootDual(float delta) {
+        reloadTimer += delta;
+        if (reloadTimer >= reloadInterval) {
+            reloadTimer = 0f;
+            dualShoot();
+        }
+    }
+
     protected void shoot() {
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, bulletPos, bulletV, bulletHeight, worldBounds, damage);
+        shootSound.play();
+    }
+
+    protected void dualShoot() {
+        Bullet bulletLeft = bulletPool.obtain();
+        Bullet bulletRight = bulletPool.obtain();
+        bulletLeft.set(this, bulletRegion, bulletPosLeft, bulletV, bulletHeight, worldBounds, damage);
+        bulletRight.set(this, bulletRegion, bulletPosRight, bulletV, bulletHeight, worldBounds, damage);
         shootSound.play();
     }
 
