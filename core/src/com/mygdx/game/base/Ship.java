@@ -14,6 +14,8 @@ import com.mygdx.game.sprites.Explosion;
 public abstract class Ship extends Sprite {
 
     private static final float DAMAGE_ANIMATE_INTERVAL = 0.1f;
+    private static final float DELTA_COEFF = 1.2f;
+    private float savedDelta = 0f;
 
     protected Rect worldBounds;
     protected BulletPool bulletPool;
@@ -21,6 +23,8 @@ public abstract class Ship extends Sprite {
     protected TextureRegion bulletRegion;
     protected Vector2 bulletV;
     protected Vector2 bulletPos;
+    protected Vector2 bulletPosLeft;
+    protected Vector2 bulletPosRight;
     protected float bulletHeight;
     protected int damage;
     protected Sound shootSound;
@@ -42,6 +46,14 @@ public abstract class Ship extends Sprite {
 
     @Override
     public void update(float delta) {
+        // возвращает delta(time) после паузы
+        if (savedDelta == 0f) {
+            savedDelta = delta;
+        }
+        if (delta > savedDelta*DELTA_COEFF) {
+            delta = savedDelta;
+        }
+
         pos.mulAdd(velocity, delta);
         damageAnimateTimer += delta;
         if (damageAnimateTimer >= DAMAGE_ANIMATE_INTERVAL) {
@@ -69,6 +81,10 @@ public abstract class Ship extends Sprite {
         return damage;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
     protected void autoShoot(float delta) {
         reloadTimer += delta;
         if (reloadTimer >= reloadInterval) {
@@ -77,9 +93,25 @@ public abstract class Ship extends Sprite {
         }
     }
 
+    protected void autoShootDual(float delta) {
+        reloadTimer += delta;
+        if (reloadTimer >= reloadInterval) {
+            reloadTimer = 0f;
+            dualShoot();
+        }
+    }
+
     protected void shoot() {
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, bulletPos, bulletV, bulletHeight, worldBounds, damage);
+        shootSound.play();
+    }
+
+    protected void dualShoot() {
+        Bullet bulletLeft = bulletPool.obtain();
+        Bullet bulletRight = bulletPool.obtain();
+        bulletLeft.set(this, bulletRegion, bulletPosLeft, bulletV, bulletHeight, worldBounds, damage);
+        bulletRight.set(this, bulletRegion, bulletPosRight, bulletV, bulletHeight, worldBounds, damage);
         shootSound.play();
     }
 

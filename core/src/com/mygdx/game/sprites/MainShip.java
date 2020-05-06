@@ -13,7 +13,7 @@ import com.mygdx.game.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
-    private static final int HP = 10;
+    private static final int HP = 100;
     private static final float SHIP_HEIGHT = 0.15f;
     private static final float BOTTOM_MARGIN = 0.05f;
     private static final int INVALID_POINTER = -1;
@@ -31,7 +31,9 @@ public class MainShip extends Ship {
         this.shootSound = shootSound;
         bulletRegion = atlas.findRegion("bulletMainShip");
         bulletV = new Vector2(0, 0.5f); // скорость пули
-        bulletPos = new Vector2();
+        //bulletPos = new Vector2();
+        bulletPosLeft = new Vector2();
+        bulletPosRight = new Vector2();
         velocity0 = new Vector2(0.5f, 0); // постоянная скорость коробля по оси х
         velocity = new Vector2();
         reloadInterval = 0.2f;
@@ -51,8 +53,13 @@ public class MainShip extends Ship {
     @Override
     public void update(float delta) {
         super.update(delta);
-        bulletPos.set(pos.x, pos.y + getHalfHeight());
-        autoShoot(delta);
+        // пуля вылетает из носа коробля
+//        bulletPos.set(pos.x, pos.y + getHalfHeight());
+//        autoShoot(delta);
+        // дубль стрельба
+        bulletPosLeft.set(pos.x - getHalfWidth() / 1.3f, pos.y + getHalfHeight() / 2.5f);
+        bulletPosRight.set(pos.x + getHalfWidth() / 1.3f, pos.y + getHalfHeight() / 2.5f);
+        autoShootDual(delta);
         // проверка выхода за пределы экрана, остановка у края экрана
         if (getLeft() < worldBounds.getLeft()) {
             setLeft(worldBounds.getLeft());
@@ -146,6 +153,11 @@ public class MainShip extends Ship {
         hp = HP;
         pos.x = worldBounds.pos.x;
         flushDestroy();
+        pressedLeft = false;
+        pressedRight = false;
+        leftPointer = INVALID_POINTER;
+        rightPointer = INVALID_POINTER;
+        stop();
     }
 
     public boolean isBulletCollision(Rect bullet) {
